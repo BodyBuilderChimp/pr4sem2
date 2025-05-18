@@ -20,13 +20,11 @@ int main(int argc, char *argv[]) {
     int addrlen = sizeof(address);
     char buffer[MAX_BUFFER] = {0};
 
-    // Создание сокета
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
         perror("socket failed");
         exit(EXIT_FAILURE);
     }
 
-    // Привязка сокета к порту
     if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))) {
         perror("setsockopt");
         exit(EXIT_FAILURE);
@@ -40,7 +38,6 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    // Прослушивание входящих соединений
     if (listen(server_fd, 3) < 0) {
         perror("listen");
         exit(EXIT_FAILURE);
@@ -49,13 +46,11 @@ int main(int argc, char *argv[]) {
     printf("Server listening on port %d\n", port);
 
     while (1) {
-        // Принятие соединения
         if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
             perror("accept");
             exit(EXIT_FAILURE);
         }
 
-        // Генерация случайного числа
         srand(time(NULL));
         int number_to_guess = rand() % 100 + 1;
         int guess = 0;

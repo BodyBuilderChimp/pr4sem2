@@ -18,23 +18,19 @@ int main(int argc, char *argv[]) {
     struct sockaddr_in serv_addr;
     char buffer[MAX_BUFFER] = {0};
 
-    // Создание сокета
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("Socket creation error");
         exit(EXIT_FAILURE);
     }
 
-    // Настройка адреса сервера
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(port); // Преобразование порта в сетевой порядок байтов
+    serv_addr.sin_port = htons(port);
 
-    // Преобразование IP-адреса из текстового формата в двоичный
     if (inet_pton(AF_INET, server_ip, &serv_addr.sin_addr) <= 0) {
         perror("Invalid address/ Address not supported");
         exit(EXIT_FAILURE);
     }
 
-    // Подключение к серверу
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
         perror("Connection failed");
         exit(EXIT_FAILURE);
@@ -42,21 +38,17 @@ int main(int argc, char *argv[]) {
 
     printf("Connected to server %s on port %d\n", server_ip, port);
 
-    // Основной цикл для отправки и получения данных
     while (1) {
         printf("Enter message: ");
         fgets(buffer, MAX_BUFFER, stdin);
 
-        // Отправка сообщения на сервер
         send(sock, buffer, strlen(buffer), 0);
 
-        // Получение ответа от сервера
-        memset(buffer, 0, MAX_BUFFER); // Очистка буфера
+        memset(buffer, 0, MAX_BUFFER);
         int valread = read(sock, buffer, MAX_BUFFER);
         printf("Server: %s\n", buffer);
     }
 
-    // Закрытие сокета
     close(sock);
     return 0;
 }
